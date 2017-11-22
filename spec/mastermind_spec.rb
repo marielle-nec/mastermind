@@ -95,6 +95,7 @@ describe Solution do
   end
 
   describe "#response" do
+
     subject(:response) { solution.response(guess) }
 
     context "when the guess only contains one correctly colored peg" do
@@ -106,5 +107,17 @@ describe Solution do
       let(:guess) { [1,5,5,5] }
       include_examples "a correct response", 0, 1
     end
+
+    context "when the guess contains 3 correctly coloured and placed pegs" do
+      let(:guess) { [1,2,3,5] }
+      include_examples "a correct response", 0, 3
+    end
+
+    context "when the guess contains 2 correct colours buy no correct placements" do
+      let(:guess) { [5,3,5,2] }
+      include_examples "a correct response", 2, 0
+    end
+
+    # context "when the solution contains"
   end
 end

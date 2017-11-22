@@ -28,6 +28,31 @@ Response = Struct.new(:number_of_white_pegs, :number_of_black_pegs)
 
 Solution = Struct.new(:solution) do
   def response(guess)
-    Response.new(1, 0)
+    unmatched_solution_items = []
+    unmatched_guess_items = []
+    black_pegs = 0
+    white_pegs = 0
+
+
+    guess.zip(solution).each do |g, actual|
+      if g == actual
+        black_pegs += 1
+      else
+        if unmatched_solution_items.include?(g)
+          unmatched_solution_items.delete_at(unmatched_solution_items.index(g))
+          white_pegs += 1
+        else
+          unmatched_guess_items << g
+        end
+
+        if unmatched_guess_items.include?(actual)
+          unmatched_guess_items.delete_at(unmatched_guess_items.index(actual))
+          white_pegs += 1
+        else
+          unmatched_solution_items << actual
+        end
+      end
+    end
+     Response.new(white_pegs, black_pegs)
   end
 end
