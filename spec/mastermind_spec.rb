@@ -1,7 +1,15 @@
 require_relative "../mastermind"
 
 
-shared_example "response is correct" do |white_pegs, black_pegs|
+shared_examples "a correct response" do |white_pegs, black_pegs|
+  it "has #{white_pegs} white pegs" do
+    expect(response.number_of_white_pegs).to eq(white_pegs)
+  end
+
+  it "has #{black_pegs} black pegs" do
+    expect(response.number_of_black_pegs).to eq(black_pegs)
+  end
+end
 
 describe Mastermind do
   let(:solution) { [1,2,3,4] }
@@ -51,17 +59,10 @@ describe Mastermind do
           expect(subject.guess).to eq([1,2,3,4])
         end
 
-        describe "the response" do
-          subject { turn.response }
-
-          it "should have 0 white pegs" do
-            expect(subject.number_of_white_pegs).to eq(0)
-          end
-
-          it "should have 4 black pegs" do
-            expect(subject.number_of_black_pegs)
-          end
+        it_behaves_like "a correct response", 0, 4 do
+          let(:response) { subject.response }
         end
+
       end
     end
 
