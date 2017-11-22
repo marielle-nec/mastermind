@@ -25,3 +25,9 @@ Turn = Struct.new(:guess, :response)
 
 
 Response = Struct.new(:number_of_white_pegs, :number_of_black_pegs)
+
+Solution = Struct.new(:solution) do
+  def response(guess)
+    Response.new(1, 0)
+  end
+end

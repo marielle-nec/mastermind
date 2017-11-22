@@ -17,14 +17,6 @@ describe Mastermind do
   let(:incorrect_test_guess) { [1,1,4,3] }
   let(:model) { Mastermind.new(6, solution) }
 
-  def count_white_pegs(response)
-    response.count{ |item| item == white_peg }
-  end
-
-  def count_black_pegs(response)
-    response.count{ |item| item == black_peg }
-  end
-
   describe "#game_over?" do
     subject { model.game_over? }
 
@@ -48,55 +40,34 @@ describe Mastermind do
     end
   end
 
-  # describe "#turns" do
-  #   subject(:turns){ model.turns }
-  #
-  #   context "when no turns have been made" do
-  #     it { is_expected.to be_empty }
-  #   end
-  #
-  #   context "when a turn has been made" do
-  #     before { model.take_turn([1,2,3,4]) }
-  #     it "should have return one turn" do
-  #       expect(subject.length).to eq(1)
-  #     end
-  #
-  #     describe "the returned turn" do
-  #       subject(:turn) { turns.first }
-  #
-  #       it "its guess should be the same as the input" do
-  #         expect(subject.guess).to eq([1,2,3,4])
-  #       end
-  #
-  #       describe "the response" do
-  #         subject { turn.response }
-  #
-  #         it "should have 0 white pegs" do
-  #           expect(subject.number_of_white_pegs).to eq(0)
-  #         end
-  #
-  #         it "should have 4 black pegs" do
-  #           expect(subject.number_of_black_pegs)
-  #         end
-  #       end
-  #     end
-  #   end
-  # end
+  describe "#turns" do
+    subject(:turns){ model.turns }
 
-  describe "#generate_response" do
-    subject(:response) { model.generate_response(guess) }
-
-    context "when a fully correct guess is given (all numbers in solution guessed in correct order)" do
-      it "the response contains 4 black pegs"
+    context "when no turns have been made" do
+      it { is_expected.to be_empty }
     end
 
-    context "when a guess contains one number included in the solution in the same place" do
-      it "the response contains one black_peg" do
-        let(:incorrect_test_guess) { [1,5,6,9] }
-        expect                     { count_black_pegs(response).to eq(1) }
+    context "when a turn has been made" do
+      before { model.take_turn([1,2,3,4]) }
+      it "should have return one turn" do
+        expect(subject.length).to eq(1)
+      end
+
+      describe "the returned turn" do
+        subject(:turn) { turns.first }
+
+        it "its guess should be the same as the input" do
+          expect(subject.guess).to eq([1,2,3,4])
+        end
+
+        it_behaves_like "a correct response", 0, 4 do
+          let(:response) { turn.response }
+        end
       end
     end
   end
+
+
 end
 # describe Turn do
 #   let(:test_guess)    { [1,2,4,4] }
@@ -111,3 +82,29 @@ end
 #     expect(turn.response).to eq(test_response)
 #   end
 # end
+
+describe Solution do
+  let(:solution) { Solution.new([1,2,3,4]) }
+
+  def count_white_pegs(response)
+    response.count{ |item| item == white_peg }
+  end
+
+  def count_black_pegs(response)
+    response.count{ |item| item == black_peg }
+  end
+
+  describe "#response" do
+    subject(:response) { solution.response(guess) }
+
+    context "when the guess only contains one correctly colored peg" do
+      let(:guess) { [2,5,5,5] }
+      include_examples "a correct response", 1, 0
+    end
+
+    context "when the guess only contains one correctly coloured and placed peg" do
+      let(:guess) { [1,5,5,5] }
+      include_examples "a correct response", 0, 1
+    end
+  end
+end
