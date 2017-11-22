@@ -5,24 +5,28 @@ class Mastermind
   def initialize(turns = 6, solution)
     @starting_number_of_turns = turns
     @solution = solution
-    @won = false
     @turns = []
   end
 
   def game_over?
-      @starting_number_of_turns == 0 || @won
+    turns_left == 0 || won?
   end
 
   def take_turn(guess)
-    @starting_number_of_turns -= 1
-    @won = guess == @solution
-    @turns << Turn.new(guess, Response.new(0, 4))
+    @turns << Turn.new(guess, @solution.response(guess))
+  end
+
+  def turns_left
+    @starting_number_of_turns - @turns.length
+  end
+
+  def won?
+    @turns.any? { |turn| turn.guess == @solution.solution }
   end
 
 end
 
 Turn = Struct.new(:guess, :response)
-
 
 Response = Struct.new(:number_of_white_pegs, :number_of_black_pegs)
 
@@ -33,26 +37,23 @@ Solution = Struct.new(:solution) do
     black_pegs = 0
     white_pegs = 0
 
-
-    guess.zip(solution).each do |g, actual|
-      if g == actual
+    guess.zip(solution).each do |g, s|
+      if g == s
         black_pegs += 1
       else
-        if unmatched_solution_items.include?(g)
-          unmatched_solution_items.delete_at(unmatched_solution_items.index(g))
-          white_pegs += 1
-        else
-          unmatched_guess_items << g
-        end
-
-        if unmatched_guess_items.include?(actual)
-          unmatched_guess_items.delete_at(unmatched_guess_items.index(actual))
-          white_pegs += 1
-        else
-          unmatched_solution_items << actual
-        end
+        unmatched_guess_items << g
+        unmatched_solution_items << s
       end
     end
-     Response.new(white_pegs, black_pegs)
+
+    unmatched_guess_items.each do |g|
+      if unmatched_solution_items.include?(g)
+        unmatched_solution_items.delete_at(unmatched_solution_items.index(g))
+        white_pegs += 1
+      end
+    end
+
+    Response.new(white_pegs, black_pegs)
   end
+
 end
