@@ -1,7 +1,16 @@
 require_relative "../mastermind"
 
 
-# shared_example "response is correct" do |white_pegs, black_pegs|
+
+shared_examples "a correct response" do |white_pegs, black_pegs|
+  it "has #{white_pegs} white pegs" do
+    expect(response.number_of_white_pegs).to eq(white_pegs)
+  end
+
+  it "has #{black_pegs} black pegs" do
+    expect(response.number_of_black_pegs).to eq(black_pegs)
+  end
+end
 
 describe Mastermind do
   let(:solution) { [1,2,3,4] }
@@ -77,9 +86,10 @@ describe Mastermind do
   describe "#generate_response" do
     subject(:response) { model.generate_response(guess) }
 
-    # context "when a fully correct guess is given (all numbers in solution guessed in correct order), the response reflects this" do
-    #
-    # end
+    context "when a fully correct guess is given (all numbers in solution guessed in correct order)" do
+      it "the response contains 4 black pegs"
+    end
+
     context "when a guess contains one number included in the solution in the same place" do
       it "the response contains one black_peg" do
         let(:incorrect_test_guess) { [1,5,6,9] }
@@ -88,7 +98,6 @@ describe Mastermind do
     end
   end
 end
-
 # describe Turn do
 #   let(:test_guess)    { [1,2,4,4] }
 #   let(:test_response) { [] }
