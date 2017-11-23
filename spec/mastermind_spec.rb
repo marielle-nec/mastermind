@@ -22,6 +22,10 @@ describe Mastermind do
   let(:incorrect_test_guess) { [1,1,4,3] }
   let(:model) { Mastermind.new(6, solution) }
 
+  # describe "#play" do
+  #
+  # end
+
   describe "#game_over?" do
     subject { model.game_over? }
 

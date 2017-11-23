@@ -1,5 +1,5 @@
 class Mastermind
-  attr_reader :turns
+  attr_reader :turns, :solution
 
   def initialize(turns = 6, solution)
     @starting_number_of_turns = turns
