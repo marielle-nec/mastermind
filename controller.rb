@@ -10,15 +10,15 @@ class Controller
 
   def play
     @view.display_welcome
-    while !@mastermind.game_over?
 
+    while !@mastermind.game_over?
       guess = @view.ask_for_guess
       @mastermind.take_turn(guess)
       @view.display_turns
-
     end
+
+    @view.display_game_result
   end
 end
-
 
 Controller.new.play

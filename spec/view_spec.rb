@@ -7,7 +7,6 @@ describe View do
   describe "#display_welcome" do
     subject { view.display_welcome }
 
-
     it "is expected to output \"Welcome to Mastermind!\"" do
       expect { subject }.to output("Welcome to Mastermind!\n").to_stdout
     end
@@ -15,18 +14,18 @@ describe View do
 
   describe "#display_turns" do
     subject { view.display_turns }
-    context "when there are no turns" do
-      let(:model) do
-        instance_double(Mastermind,
-          solution: Solution.new([1,2,3,4]),
-          turns: []
-        )
-      end
-
-      it "is expected to output nothing" do
-        expect { subject }.to output("").to_stdout
-      end
-    end
+    # context "when there are no turns" do
+    #   let(:model) do
+    #     instance_double(Mastermind,
+    #       solution: Solution.new([1,2,3,4]),
+    #       turns: []
+    #     )
+    #   end
+    #
+    #   it "is expected to output nothing" do
+    #     expect { subject }.to output("").to_stdout
+    #   end
+    # end
 
     context "when 1234 has been guessed" do
       solution = Solution.new([1,2,3,4])
@@ -37,10 +36,30 @@ describe View do
         )
       end
 
-      it "is expected to output \"1234 - 04\"" do
-        expect { subject }.to output("1234 - 04\n").to_stdout
+      it "is expected to output \"1234 - 0w, 4b\"" do
+        expect { subject }.to output("Previous Guesses:\n1234 - 0w, 4b\n").to_stdout
       end
     end
+  end
+
+  describe "#display_game_result" do
+    subject { view.display_game_result }
+
+    context "when the user has won the game" do
+      let(:model) { instance_double(Mastermind, won?: true) }
+
+      it "is expected to output \"Congratulations, you guessed the code.\"" do
+        expect { subject }.to output("Congratulations, you guessed the code.\n").to_stdout
+      end
+    end
+
+    # context "when the user has lost the game" do
+    #   let(:model) { instance_double(Mastermind, won?: false) }
+    #
+    #   it "is expected to output \"You failed to crack the code, which was 1234\"" do
+    #     expect { subject }.to output("You failed to crack the code, which was 1234\n").to_stdout
+    #   end
+    # end
   end
 
   describe "#display_solution" do
