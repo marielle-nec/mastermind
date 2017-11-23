@@ -48,25 +48,17 @@ class Response
   end
 
   def calculate_number_of_white_pegs(solution, guess)
-    unmatched_guess_items = []
-    unmatched_solution_items = []
+    total_matches(solution, guess) - calculate_number_of_black_pegs(solution, guess)
+  end
 
-    guess.zip(solution)
-    .reject { |guess_item, solution_item| guess_item == solution_item }
-    .each do |guess_item, solution_item|
-      unmatched_guess_items << guess_item
-      unmatched_solution_items << solution_item
+  private
+
+  def total_matches(solution, guess)
+    guess.uniq.sum do |guess_item|
+      guess_occurences = guess.count { |item| item == guess_item }
+      solution_item_count = solution.count { |item| item == guess_item }
+      [guess_occurences, solution_item_count].min
     end
-
-    map = {}
-
-    unmatched_guess_items.uniq.each do |guess_item|
-      guess_occurences = unmatched_guess_items.count { |item| item == guess_item }
-      solution_item_count = unmatched_solution_items.count { |item| item == guess_item }
-      map[guess_item] = [guess_occurences, solution_item_count].min
-    end
-
-    map.values.sum
   end
 end
 
