@@ -7,8 +7,9 @@ describe View do
   describe "#display_welcome" do
     subject { view.display_welcome }
 
-    it "is expected to output \"Welcome to GAMELAND\"" do
-      expect { subject }.to output("Welcome to GAMELAND\n").to_stdout
+
+    it "is expected to output \"Welcome to Mastermind!\"" do
+      expect { subject }.to output("Welcome to Mastermind!\n").to_stdout
     end
   end
 
@@ -23,7 +24,21 @@ describe View do
       end
 
       it "is expected to output nothing" do
-        expect { subject }.to output("\n").to_stdout
+        expect { subject }.to output("").to_stdout
+      end
+    end
+
+    context "when 1234 has been guessed" do
+      solution = Solution.new([1,2,3,4])
+      let(:model) do
+        instance_double(Mastermind,
+          solution: solution,
+          turns: [Turn.new([1,2,3,4], solution.response([1,2,3,4]))]
+        )
+      end
+
+      it "is expected to output \"1234 - 04\"" do
+        expect { subject }.to output("1234 - 04\n").to_stdout
       end
     end
   end
@@ -39,6 +54,25 @@ describe View do
 
       it "is expected to output \"1234\"" do
         expect { subject }.to output("1234\n").to_stdout
+      end
+    end
+  end
+
+  describe "#ask_for_guess" do
+    subject(:input) { view.ask_for_guess }
+
+    context "when the user inputs \"1234\"" do
+      it "should correctly parse it to [1,2,3,4]" do
+        allow($stdin).to receive(:gets).and_return("1234\n")
+        expect(subject).to eq([1,2,3,4])
+      end
+    end
+
+    context "when the user inputs \"1230\" and then \"1234\"" do
+      it "should display an error message and then correctly parse it to [1,2,3,4]" do
+        allow($stdin).to receive(:gets).and_return("1230\n", "1234\n")
+        expect { subject }.to output("Invalid input, try again\n").to_stdout
+        expect(subject).to eq([1,2,3,4])
       end
     end
   end
