@@ -1,5 +1,4 @@
 class Mastermind
-
   attr_reader :turns
 
   def initialize(turns = 6, solution)
@@ -23,37 +22,62 @@ class Mastermind
   def won?
     @turns.any? { |turn| turn.guess == @solution.solution }
   end
-
 end
 
-Turn = Struct.new(:guess, :response)
+class Turn
+  attr_reader :guess, :response
 
-Response = Struct.new(:number_of_white_pegs, :number_of_black_pegs)
+  def initialize(guess, response)
+    @guess = guess
+    @response = response
+  end
+end
 
-Solution = Struct.new(:solution) do
-  def response(guess)
-    unmatched_solution_items = []
+class Response
+
+  attr_reader :white_pegs, :black_pegs
+
+  def initialize(solution, guess)
+    @white_pegs = calculate_number_of_white_pegs(solution, guess)
+    @black_pegs = calculate_number_of_black_pegs(solution, guess)
+
+  end
+
+  def calculate_number_of_black_pegs(solution, guess)
+    guess.zip(solution).select { |guess_item, solution_item| guess_item == solution_item }.length
+  end
+
+  def calculate_number_of_white_pegs(solution, guess)
     unmatched_guess_items = []
-    black_pegs = 0
+    unmatched_solution_items = []
     white_pegs = 0
 
-    guess.zip(solution).each do |g, s|
-      if g == s
-        black_pegs += 1
-      else
-        unmatched_guess_items << g
-        unmatched_solution_items << s
-      end
+    guess.zip(solution)
+    .reject { |guess_item, solution_item| guess_item == solution_item }
+    .each do |guess_item, solution_item|
+      unmatched_guess_items << guess_item
+      unmatched_solution_items << solution_item
     end
 
-    unmatched_guess_items.each do |g|
-      if unmatched_solution_items.include?(g)
-        unmatched_solution_items.delete_at(unmatched_solution_items.index(g))
+    unmatched_guess_items.each do |guess_item|
+      if unmatched_solution_items.include?(guess_item)
+        unmatched_solution_items.delete_at(unmatched_solution_items.index(guess_item))
         white_pegs += 1
       end
     end
 
-    Response.new(white_pegs, black_pegs)
+    white_pegs
+  end
+end
+
+class Solution
+  attr_reader :solution
+
+  def initialize(solution)
+    @solution = solution
   end
 
+  def response(guess)
+    Response.new(solution, guess)
+  end
 end
